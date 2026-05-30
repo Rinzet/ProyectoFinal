@@ -1,0 +1,437 @@
+/* ============================================
+   SMARTROOM - ESTILOS RESPONSIVE
+   Adaptable para distintos tamaños de pantalla
+   ============================================ */
+
+/* ========== TABLET (768px - 1024px) ========== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+        padding: 16px;
+    }
+    
+    .logo h1 {
+        font-size: 18px;
+    }
+    
+    .header {
+        padding: 16px 24px;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .header-left {
+        width: 100%;
+    }
+    
+    .header-left h2 {
+        font-size: 24px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .content-wrapper {
+        padding: 24px;
+    }
+    
+    .indicators-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .sensors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .rooms-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+/* ========== MÓVIL GRANDE (480px - 768px) ========== */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .sidebar.open {
+        display: flex;
+    }
+    
+    .sidebar-header {
+        margin-bottom: 20px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .logo h1 {
+        font-size: 16px;
+    }
+    
+    .main-content {
+        width: 100%;
+        margin-top: 0;
+    }
+    
+    .header {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .header-left h2 {
+        font-size: 20px;
+    }
+    
+    .header-right {
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .search-box {
+        width: calc(100% - 40px);
+    }
+    
+    .time-display {
+        font-size: 12px;
+        min-width: 70px;
+    }
+    
+    .content-wrapper {
+        padding: 16px;
+    }
+    
+    .indicators-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    
+    .indicator-card {
+        padding: 16px;
+    }
+    
+    .indicator-value {
+        font-size: 24px;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .chart-container {
+        padding: 16px;
+    }
+    
+    .sensors-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .sensor-card {
+        padding: 16px;
+    }
+    
+    .sensor-value {
+        font-size: 24px;
+    }
+    
+    .rooms-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        margin: 20px 0 16px 0;
+    }
+    
+    .footer {
+        padding: 12px 16px;
+        font-size: 11px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .footer-info {
+        gap: 12px;
+    }
+}
+
+/* ========== MÓVIL PEQUEÑO (max 480px) ========== */
+@media (max-width: 480px) {
+    :root {
+        font-size: 13px;
+    }
+    
+    .header-left h2 {
+        font-size: 18px;
+    }
+    
+    .page-subtitle {
+        font-size: 12px;
+    }
+    
+    .search-box {
+        width: calc(100% - 50px);
+    }
+    
+    .search-box input {
+        padding: 8px 12px 8px 32px;
+        font-size: 12px;
+    }
+    
+    .indicators-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .indicator-card {
+        padding: 12px;
+    }
+    
+    .indicator-header h3 {
+        font-size: 12px;
+    }
+    
+    .indicator-icon {
+        font-size: 20px;
+    }
+    
+    .indicator-value {
+        font-size: 20px;
+    }
+    
+    .indicator-status {
+        font-size: 11px;
+    }
+    
+    .sensor-card {
+        padding: 12px;
+    }
+    
+    .sensor-title {
+        font-size: 14px;
+    }
+    
+    .sensor-icon {
+        font-size: 24px;
+    }
+    
+    .sensor-value {
+        font-size: 20px;
+    }
+    
+    .sensor-status {
+        font-size: 11px;
+    }
+    
+    .sensor-location {
+        font-size: 11px;
+    }
+    
+    .sensor-btn {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .room-card {
+        padding: 16px;
+    }
+    
+    .room-name {
+        font-size: 18px;
+    }
+    
+    .room-temp {
+        font-size: 20px;
+    }
+    
+    .device-chip {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    
+    .nav-item {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .nav-item .icon {
+        font-size: 18px;
+    }
+    
+    .alert-item {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .alert-close {
+        align-self: flex-end;
+    }
+    
+    .settings-panel {
+        padding: 16px;
+    }
+    
+    .settings-panel h3 {
+        font-size: 18px;
+    }
+    
+    .logo h1 {
+        font-size: 14px;
+    }
+}
+
+/* ========== ORIENTACIÓN HORIZONTAL (MOBILE LANDSCAPE) ========== */
+@media (max-height: 600px) and (orientation: landscape) {
+    .sidebar {
+        max-height: 100vh;
+    }
+    
+    .content-wrapper {
+        max-height: calc(100vh - 140px);
+    }
+    
+    .indicators-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========== PANTALLAS GRANDES (> 1440px) ========== */
+@media (min-width: 1440px) {
+    .indicators-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .sensors-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .rooms-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .search-box {
+        width: 300px;
+    }
+}
+
+/* ========== PANTALLAS ULTRA ANCHAS (> 1920px) ========== */
+@media (min-width: 1920px) {
+    .content-wrapper {
+        max-width: 1900px;
+        margin: 0 auto;
+    }
+    
+    .indicators-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    
+    .sensors-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ========== MODO OSCURO (PREFERENCIA DEL NAVEGADOR) ========== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-dark: #0a0e27;
+        --bg-dark-2: #111d3f;
+        --bg-dark-3: #1a2856;
+    }
+}
+
+/* ========== MODO CLARO (PREFERENCIA DEL NAVEGADOR) ========== */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-dark: #f5f5f5;
+        --bg-dark-2: #eeeeee;
+        --bg-dark-3: #e0e0e0;
+        --text-primary: #1a1a1a;
+        --text-secondary: #4a4a4a;
+        --text-muted: #6a6a6a;
+    }
+}
+
+/* ========== ACCESIBILIDAD: REDUCIR MOVIMIENTO ========== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ========== IMPRESIÓN ========== */
+@media print {
+    .sidebar,
+    .header,
+    .footer,
+    .notification-btn,
+    .search-box,
+    .sensor-btn {
+        display: none;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+    
+    .main-content {
+        width: 100%;
+        background: white;
+        color: black;
+    }
+    
+    .content-wrapper {
+        padding: 0;
+    }
+    
+    .indicator-card,
+    .sensor-card,
+    .room-card,
+    .chart-container {
+        background: white;
+        border: 1px solid #ccc;
+        color: black;
+    }
+}

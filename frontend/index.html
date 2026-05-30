@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRoom - Sistema Inteligente de Monitoreo</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Chart.js para gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- GSAP para animaciones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <!-- Container principal con fondo animado -->
+    <div class="animated-background"></div>
+    
+    <div class="container">
+        <!-- SIDEBAR LATERAL -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <h1>SmartRoom</h1>
+                </div>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    <span class="label">Dashboard</span>
+                </a>
+                <a href="#rooms" class="nav-item" data-section="rooms">
+                    <span class="icon">🏠</span>
+                    <span class="label">Habitaciones</span>
+                </a>
+                <a href="#sensors" class="nav-item" data-section="sensors">
+                    <span class="icon">📡</span>
+                    <span class="label">Sensores</span>
+                </a>
+                <a href="#alerts" class="nav-item" data-section="alerts">
+                    <span class="icon">⚠️</span>
+                    <span class="label">Alertas</span>
+                </a>
+                <a href="#settings" class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span>
+                    <span class="label">Configuración</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <p class="user-name">Admin User</p>
+                        <p class="user-status">En línea</p>
+                    </div>
+                </div>
+                <button class="logout-btn">Salir</button>
+            </div>
+        </aside>
+        
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+            <!-- HEADER SUPERIOR -->
+            <header class="header">
+                <div class="header-left">
+                    <h2 class="page-title">Dashboard</h2>
+                    <p class="page-subtitle">Monitoreo en tiempo real de sistemas inteligentes</p>
+                </div>
+                
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar sensores...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    
+                    <div class="time-display">
+                        <span id="current-time">00:00:00</span>
+                    </div>
+                    
+                    <button class="notification-btn">
+                        <span>🔔</span>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- SECCIONES PRINCIPALES -->
+            <div class="content-wrapper">
+                
+                <!-- SECCIÓN: DASHBOARD -->
+                <section id="dashboard-section" class="section active">
+                    <!-- Indicadores principales -->
+                    <div class="indicators-grid">
+                        <div class="indicator-card">
+                            <div class="indicator-header">
+                                <h3>Temperatura Global</h3>
+                                <span class="indicator-icon">🌡️</span>
+                            </div>
+                            <div class="indicator-value" id="tempValue">22.5°C</div>
+                            <div class="indicator-bar">
+                                <div class="indicator-fill" id="tempBar" style="width: 45%"></div>
+                            </div>
+                            <p class="indicator-status">Normal - Rango óptimo</p>
+                        </div>
+                        
+                        <div class="indicator-card">
+                            <div class="indicator-header">
+                                <h3>Humedad Promedio</h3>
+                                <span class="indicator-icon">💧</span>
+                            </div>
+                            <div class="indicator-value" id="humidityValue">58%</div>
+                            <div class="indicator-bar">
+                                <div class="indicator-fill" id="humidityBar" style="width: 58%"></div>
+                            </div>
+                            <p class="indicator-status">Óptimo - 40-60%</p>
+                        </div>
+                        
+                        <div class="indicator-card">
+                            <div class="indicator-header">
+                                <h3>Consumo Energético</h3>
+                                <span class="indicator-icon">⚡</span>
+                            </div>
+                            <div class="indicator-value" id="powerValue">2.4 kW</div>
+                            <div class="indicator-bar">
+                                <div class="indicator-fill" id="powerBar" style="width: 24%"></div>
+                            </div>
+                            <p class="indicator-status">Moderado - Eficiente</p>
+                        </div>
+                        
+                        <div class="indicator-card">
+                            <div class="indicator-header">
+                                <h3>Dispositivos Activos</h3>
+                                <span class="indicator-icon">📱</span>
+                            </div>
+                            <div class="indicator-value" id="devicesValue">12/16</div>
+                            <div class="indicator-bar">
+                                <div class="indicator-fill" id="devicesBar" style="width: 75%"></div>
+                            </div>
+                            <p class="indicator-status">75% Operacional</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráficas -->
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>Temperatura por Hora</h3>
+                            <canvas id="temperatureChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h3>Consumo de Energía</h3>
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Tarjetas de sensores -->
+                    <h3 class="section-title">Sensores Activos</h3>
+                    <div class="sensors-grid" id="sensorsContainer">
+                        <!-- Sensores se cargarán dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- SECCIÓN: HABITACIONES -->
+                <section id="rooms-section" class="section">
+                    <div class="rooms-grid" id="roomsContainer">
+                        <!-- Habitaciones se cargarán dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- SECCIÓN: SENSORES -->
+                <section id="sensors-section" class="section">
+                    <div class="sensors-list" id="sensorsListContainer">
+                        <!-- Lista de sensores se cargará dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- SECCIÓN: ALERTAS -->
+                <section id="alerts-section" class="section">
+                    <div class="alerts-container" id="alertsContainer">
+                        <!-- Alertas se cargarán dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- SECCIÓN: CONFIGURACIÓN -->
+                <section id="settings-section" class="section">
+                    <div class="settings-panel">
+                        <h3>Configuración del Sistema</h3>
+                        <div class="settings-group">
+                            <label>
+                                <input type="checkbox" checked> Notificaciones activas
+                            </label>
+                            <label>
+                                <input type="checkbox" checked> Modo oscuro
+                            </label>
+                            <label>
+                                <input type="checkbox"> Animaciones reduce
+                            </label>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- FOOTER -->
+            <footer class="footer">
+                <p>&copy; 2026 SmartRoom - Sistema Inteligente de Monitoreo | Versión 1.0</p>
+                <div class="footer-info">
+                    <span>Estado: <strong id="systemStatus">Online</strong></span>
+                    <span>Última actualización: <strong id="lastUpdate">Ahora</strong></span>
+                </div>
+            </footer>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
