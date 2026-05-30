@@ -53,7 +53,8 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-primary);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* ========== FONDO ANIMADO ========== */
@@ -107,7 +108,9 @@ body {
 
 /* ========== LAYOUT PRINCIPAL ========== */
 .container {
-    display: flex;
+    /* Use CSS Grid to guarantee a symmetric layout: fixed sidebar + flexible main */
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
     height: 100vh;
     position: relative;
     z-index: 1;
@@ -293,9 +296,10 @@ body {
 
 /* ========== CONTENIDO PRINCIPAL ========== */
 .main-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -403,9 +407,12 @@ body {
 .content-wrapper {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 32px;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
 }
 
 .section {
@@ -443,34 +450,13 @@ body {
 }
 
 /* ========== INDICADORES ========== */
+
 .indicators-grid {
     display: grid;
-    /* Responsive indicators: auto-fit for adaptive columns */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+    width: 100%;
     margin-bottom: 40px;
-}
-
-/* Responsive: allow auto-fit on smaller screens */
-/* Very large screens: allow 3 columns */
-@media (min-width: 1400px) {
-    .indicators-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Medium/desktop: keep 2 columns */
-@media (max-width: 1199px) and (min-width: 921px) {
-    .indicators-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Tablet / small desktop: responsive auto-fit */
-@media (max-width: 920px) {
-    .indicators-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
 }
 
 .indicator-card {
@@ -479,6 +465,13 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    min-height: 220px;
+
     transition: var(--transition);
     position: relative;
     overflow: hidden;
@@ -492,7 +485,12 @@ body {
     left: -100%;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--primary-color),
+        transparent
+    );
     transition: var(--transition);
 }
 
@@ -500,7 +498,6 @@ body {
     background: var(--bg-glass-hover);
     border-color: var(--primary-color);
     box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
-    transform: translateY(-5px);
 }
 
 .indicator-card:hover::before {
@@ -510,7 +507,8 @@ body {
 .indicator-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 10px;
     margin-bottom: 16px;
 }
 
@@ -522,16 +520,24 @@ body {
 
 .indicator-icon {
     font-size: 24px;
-    opacity: 0.8;
+    flex-shrink: 0;
 }
 
 .indicator-value {
     font-size: 32px;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    line-height: 1.2;
+
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--accent-color)
+    );
+
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+
     margin-bottom: 12px;
 }
 
@@ -545,15 +551,32 @@ body {
 
 .indicator-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(
+        90deg,
+        var(--primary-color),
+        var(--accent-color)
+    );
     border-radius: 3px;
-    transition: width 0.5s ease;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 .indicator-status {
     font-size: 12px;
     color: var(--text-muted);
+    margin-top: auto;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .indicators-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .indicators-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ========== GRÁFICAS ========== */
@@ -563,22 +586,10 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
-}
-
-/* Very large screens: 3 columns */
-@media (min-width: 1400px) {
-    .charts-grid { grid-template-columns: repeat(3, minmax(280px, 1fr)); }
-}
-
-/* Tablet / small desktop: ensure 2 columns for readability */
-@media (min-width: 900px) and (max-width: 1399px) {
-    .charts-grid { grid-template-columns: repeat(2, minmax(280px, 1fr)); }
-}
-
-/* Small screens: single column */
-@media (max-width: 899px) {
-    /* Small screens: single column */
-    .charts-grid { grid-template-columns: 1fr; }
+    /* Make chart tiles stretch to their column width for a balanced look */
+    align-items: start;
+    justify-items: stretch;
+    justify-content: start;
 }
 
 .chart-container {
@@ -588,6 +599,7 @@ body {
     border-radius: 12px;
     padding: 24px;
     box-shadow: var(--shadow-md);
+    height:350px;
 }
 
 .chart-container h3 {
@@ -598,6 +610,8 @@ body {
 }
 
 .chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
     max-height: 300px;
 }
 
@@ -607,8 +621,30 @@ body {
     /* Sensors: adaptive columns for varied widths */
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+    /* Stretch sensor cards to fill their columns and keep symmetry */
+    justify-items: stretch;
+    align-items: start;
+    /* Ensure grid tracks align to the start so columns don't center */
+    justify-content: start;
+    grid-auto-flow: row;
 }
 
+/* The dedicated `sensors-section` uses a .sensors-list container (vertical
+   page). Make that list render as a horizontal, scrollable row of cards so
+   it matches the compact, symmetric look used on the dashboard. */
+.sensors-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 8px 4px 20px 4px;
+    align-items: flex-start;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sensors-list .sensor-card {
+    min-width: 260px;
+    flex: 0 0 260px;
+}
 @media (max-width: 920px) {
     .charts-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -912,6 +948,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .footer-info {
@@ -941,4 +978,40 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 212, 255, 0.6);
+}
+
+.indicators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+    width: 100%;
+}
+
+.indicator-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 220px;
+    width: 100%;
+}
+
+.indicator-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 48px;
+}
+
+.indicator-value {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    word-break: break-word;
+}
+
+.indicator-status {
+    min-height: 20px;
 }
