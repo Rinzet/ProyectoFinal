@@ -13,22 +13,34 @@ class DashboardManager {
         this.alertsData = [];
         this.updateInterval = null;
         this.chartUpdateInterval = null;
+        this.timeInterval = null;
+        this.listenersBound = false;
+        this.isInitialized = false;
     }
 
     /**
      * Inicializa el dashboard
      */
     async init() {
+        if (this.isInitialized) {
+            this.destroy();
+        }
+
         this.setupEventListeners();
         await this.loadDashboardData();
         this.createCharts();
         this.startAutoUpdate();
+        this.isInitialized = true;
     }
 
     /**
      * Configura los event listeners
      */
     setupEventListeners() {
+        if (this.listenersBound) {
+            return;
+        }
+
         // Navegación
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => this.handleNavigation(e));
@@ -57,14 +69,22 @@ class DashboardManager {
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.handleLogout());
         }
+
+        this.listenersBound = true;
     }
 
     /**
      * Maneja la navegación entre secciones
      */
     handleNavigation(e) {
+        e.preventDefault();
         const navItem = e.currentTarget;
         const section = navItem.getAttribute('data-section');
+        const sectionElement = document.getElementById(`${section}-section`);
+
+        if (!sectionElement) {
+            return;
+        }
 
         // Actualizar menú activo
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -73,7 +93,6 @@ class DashboardManager {
         navItem.classList.add('active');
 
         // Cambiar sección
-        const sectionElement = document.getElementById(`${section}-section`);
         const currentActive = document.querySelector('.section.active');
 
         if (currentActive && currentActive !== sectionElement) {
@@ -101,6 +120,7 @@ class DashboardManager {
             // Simular carga de datos (en producción, usar API)
             this.generateMockData();
             this.renderSensors();
+            this.renderSensorsList();
             this.renderRooms();
             this.renderAlerts();
             this.updateIndicators();
@@ -227,7 +247,41 @@ class DashboardManager {
                 </div>
             `;
             container.appendChild(card);
-            animationManager.animateSensorCards();
+        });
+        // Animar las tarjetas una vez después de añadirlas todas
+        animationManager.animateSensorCards();
+    }
+
+    /**
+     * Renderiza la lista detallada de sensores
+     */
+    renderSensorsList() {
+        const container = document.getElementById('sensorsListContainer');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        this.sensorsData.forEach((sensor) => {
+            const item = document.createElement('div');
+            item.className = 'sensor-card';
+            item.innerHTML = `
+                <div class="sensor-header">
+                    <div>
+                        <div class="sensor-status">● Activo</div>
+                        <h3 class="sensor-title">${sensor.name}</h3>
+                        <p class="sensor-location">${sensor.room}</p>
+                    </div>
+                    <span class="sensor-icon">${sensor.icon}</span>
+                </div>
+                <div class="sensor-value">
+                    ${sensor.value}<span class="sensor-unit">${sensor.unit || ''}</span>
+                </div>
+                <div class="sensor-actions">
+                    <button class="sensor-btn" onclick="dashboard.toggleSensor(${sensor.id})">Activar</button>
+                    <button class="sensor-btn" onclick="dashboard.showSensorDetails(${sensor.id})">Detalles</button>
+                </div>
+            `;
+            container.appendChild(item);
         });
     }
 
@@ -309,6 +363,13 @@ class DashboardManager {
      * Crea las gráficas con Chart.js
      */
     createCharts() {
+        Object.values(this.charts).forEach(chart => {
+            if (chart) {
+                chart.destroy();
+            }
+        });
+        this.charts = {};
+
         // Gráfica de temperatura
         const tempContext = document.getElementById('temperatureChart');
         if (tempContext) {
@@ -402,9 +463,21 @@ class DashboardManager {
      * Inicia la actualización automática de datos
      */
     startAutoUpdate() {
+        if (this.timeInterval) {
+            clearInterval(this.timeInterval);
+        }
+
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+        }
+
+        if (this.chartUpdateInterval) {
+            clearInterval(this.chartUpdateInterval);
+        }
+
         // Actualizar hora
         this.updateTime();
-        setInterval(() => this.updateTime(), 1000);
+        this.timeInterval = setInterval(() => this.updateTime(), 1000);
 
         // Actualizar sensores cada 5 segundos
         this.updateInterval = setInterval(() => {
@@ -517,6 +590,7 @@ class DashboardManager {
         if (sensor) {
             sensor.status = sensor.status === 'active' ? 'inactive' : 'active';
             this.renderSensors();
+            this.renderSensorsList();
         }
     }
 
@@ -544,10 +618,25 @@ class DashboardManager {
      * Limpia el dashboard
      */
     destroy() {
+        this.isInitialized = false;
+
+        if (this.timeInterval) clearInterval(this.timeInterval);
         if (this.updateInterval) clearInterval(this.updateInterval);
         if (this.chartUpdateInterval) clearInterval(this.chartUpdateInterval);
+
+        Object.values(this.charts).forEach(chart => {
+            if (chart) {
+                chart.destroy();
+            }
+        });
+        this.charts = {};
+
+        this.updateInterval = null;
+        this.chartUpdateInterval = null;
+        this.timeInterval = null;
     }
 }
 
 // Instancia global del dashboard
 const dashboard = new DashboardManager();
+window.dashboard = dashboard;

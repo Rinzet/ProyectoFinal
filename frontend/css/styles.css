@@ -404,6 +404,8 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .section {
@@ -413,7 +415,13 @@ body {
 
 .section.active {
     display: block;
+    /* Ensure active sections are visible even if animations left inline/computed offsets */
+    opacity: 1;
+    transform: none;
+    animation: none;
 }
+
+/* Temporary safety rule removed: rely on animation lifecycle fixes. */
 
 @keyframes fadeIn {
     from {
@@ -437,9 +445,32 @@ body {
 /* ========== INDICADORES ========== */
 .indicators-grid {
     display: grid;
+    /* Responsive indicators: auto-fit for adaptive columns */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
+}
+
+/* Responsive: allow auto-fit on smaller screens */
+/* Very large screens: allow 3 columns */
+@media (min-width: 1400px) {
+    .indicators-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Medium/desktop: keep 2 columns */
+@media (max-width: 1199px) and (min-width: 921px) {
+    .indicators-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablet / small desktop: responsive auto-fit */
+@media (max-width: 920px) {
+    .indicators-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
 }
 
 .indicator-card {
@@ -528,9 +559,26 @@ body {
 /* ========== GRÁFICAS ========== */
 .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    /* Charts: adapt to available width, keep each column at least 280px */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
+}
+
+/* Very large screens: 3 columns */
+@media (min-width: 1400px) {
+    .charts-grid { grid-template-columns: repeat(3, minmax(280px, 1fr)); }
+}
+
+/* Tablet / small desktop: ensure 2 columns for readability */
+@media (min-width: 900px) and (max-width: 1399px) {
+    .charts-grid { grid-template-columns: repeat(2, minmax(280px, 1fr)); }
+}
+
+/* Small screens: single column */
+@media (max-width: 899px) {
+    /* Small screens: single column */
+    .charts-grid { grid-template-columns: 1fr; }
 }
 
 .chart-container {
@@ -556,8 +604,25 @@ body {
 /* ========== SENSORES ========== */
 .sensors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* Sensors: adaptive columns for varied widths */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+}
+
+@media (max-width: 920px) {
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .sensors-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+@media (min-width: 1400px) {
+    .sensors-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+    .sensors-grid { grid-template-columns: 1fr; }
 }
 
 .sensor-card {

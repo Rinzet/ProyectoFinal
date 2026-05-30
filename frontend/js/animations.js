@@ -11,16 +11,23 @@ class AnimationManager {
         this.cards = [];
         this.sensors = [];
         this.isAnimating = false;
+        this.hasRunInitialAnimations = false;
     }
 
     /**
      * Inicializa todas las animaciones
      */
     init() {
+        if (this.hasRunInitialAnimations) {
+            return;
+        }
+
+        gsap.killTweensOf(['.logo', '.header', '.sidebar', '.indicators-grid > *', '.chart-container', '.logo-icon', '.indicator-fill', '.sensor-card']);
         this.animatePageLoad();
         this.animateSensorCards();
         this.animateIndicators();
         this.startPulseAnimations();
+        this.hasRunInitialAnimations = true;
     }
 
     /**
@@ -28,46 +35,56 @@ class AnimationManager {
      */
     animatePageLoad() {
         // Animar logo
-        gsap.from('.logo', {
+        gsap.fromTo('.logo', {
+            opacity: 1,
+            y: -20
+        }, {
             duration: 0.8,
-            opacity: 0,
-            y: -20,
+            y: 0,
             ease: 'back.out'
         });
 
         // Animar elementos del header
-        gsap.from('.header', {
+        gsap.fromTo('.header', {
+            opacity: 1,
+            y: -30
+        }, {
             duration: 0.8,
-            opacity: 0,
-            y: -30,
+            y: 0,
             delay: 0.2,
             ease: 'power2.out'
         });
 
         // Animar sidebar
-        gsap.from('.sidebar', {
+        gsap.fromTo('.sidebar', {
+            opacity: 1,
+            x: -50
+        }, {
             duration: 0.8,
-            opacity: 0,
-            x: -50,
+            x: 0,
             delay: 0.1,
             ease: 'power2.out'
         });
 
         // Animar elementos principales
-        gsap.from('.indicators-grid > *', {
+        gsap.fromTo('.indicators-grid > *', {
+            opacity: 1,
+            y: 30
+        }, {
             duration: 0.6,
-            opacity: 0,
-            y: 30,
+            y: 0,
             stagger: 0.1,
             delay: 0.3,
             ease: 'power2.out'
         });
 
         // Animar gráficas
-        gsap.from('.chart-container', {
+        gsap.fromTo('.chart-container', {
+            opacity: 1,
+            y: 40
+        }, {
             duration: 0.8,
-            opacity: 0,
-            y: 40,
+            y: 0,
             stagger: 0.15,
             delay: 0.5,
             ease: 'power2.out'
@@ -80,32 +97,40 @@ class AnimationManager {
     animateSensorCards() {
         const cards = document.querySelectorAll('.sensor-card');
         cards.forEach((card, index) => {
-            gsap.from(card, {
-                duration: 0.6,
+            // Use fromTo to ensure final state and clear inline props.
+            gsap.fromTo(card, {
                 opacity: 0,
-                y: 30,
-                delay: index * 0.1,
-                ease: 'back.out'
+                y: 30
+            }, {
+                duration: 0.6,
+                opacity: 1,
+                y: 0,
+                delay: index * 0.08,
+                ease: 'back.out',
+                onComplete: () => gsap.set(card, { clearProps: 'opacity,transform' })
             });
 
-            // Efecto hover
-            card.addEventListener('mouseenter', () => {
-                gsap.to(card, {
-                    duration: 0.3,
-                    y: -10,
-                    boxShadow: '0 0 25px rgba(0, 212, 255, 0.4)',
-                    ease: 'power2.out'
+            // Attach hover listeners only once
+            if (!card.dataset.hoverBound) {
+                card.addEventListener('mouseenter', () => {
+                    gsap.to(card, {
+                        duration: 0.3,
+                        y: -10,
+                        boxShadow: '0 0 25px rgba(0, 212, 255, 0.4)',
+                        ease: 'power2.out'
+                    });
                 });
-            });
 
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    duration: 0.3,
-                    y: 0,
-                    boxShadow: '0 0 0px rgba(0, 212, 255, 0)',
-                    ease: 'power2.out'
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        duration: 0.3,
+                        y: 0,
+                        boxShadow: '0 0 0px rgba(0, 212, 255, 0)',
+                        ease: 'power2.out'
+                    });
                 });
-            });
+                card.dataset.hoverBound = 'true';
+            }
         });
     }
 
@@ -152,19 +177,43 @@ class AnimationManager {
      * Anima el cambio de sección
      */
     animateSectionChange(fromSection, toSection) {
+        if (!fromSection || !toSection) {
+            return;
+        }
+
+        gsap.killTweensOf([fromSection, toSection]);
+        toSection.classList.add('active');
+
+        gsap.set(toSection, {
+            display: 'block',
+            opacity: 0,
+            y: 20
+        });
+
         gsap.to(fromSection, {
-            duration: 0.3,
+            duration: 0.2,
             opacity: 0,
             y: 20,
             ease: 'power2.in',
             onComplete: () => {
+                // Remove active state and hide the previous section to avoid
+                // leaving an invisible element occupying layout space.
                 fromSection.classList.remove('active');
-                toSection.classList.add('active');
-                gsap.from(toSection, {
-                    duration: 0.4,
+                gsap.set(fromSection, { display: 'none', clearProps: 'all' });
+
+                // Animate the incoming section and clear animation props
+                gsap.fromTo(toSection, {
                     opacity: 0,
-                    y: 20,
-                    ease: 'power2.out'
+                    y: 20
+                }, {
+                    duration: 0.35,
+                    opacity: 1,
+                    y: 0,
+                    ease: 'power2.out',
+                    onComplete: () => {
+                        // Remove inline transform/opacity but keep class-driven display
+                        gsap.set(toSection, { clearProps: 'transform,opacity' });
+                    }
                 });
             }
         });
@@ -406,3 +455,4 @@ class AnimationManager {
 
 // Instancia global del gestor de animaciones
 const animationManager = new AnimationManager();
+window.animationManager = animationManager;

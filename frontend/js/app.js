@@ -9,12 +9,18 @@ class SmartRoomApp {
     constructor() {
         this.isInitialized = false;
         this.user = null;
+        this.globalEventsBound = false;
+        this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
     }
 
     /**
      * Inicializa la aplicación
      */
     async init() {
+        if (this.isInitialized) {
+            return;
+        }
+
         console.log('🚀 SmartRoom - Sistema Inteligente de Monitoreo');
         console.log('Inicializando aplicación...');
 
@@ -44,7 +50,15 @@ class SmartRoomApp {
         await dashboard.init();
 
         // Inicializar animaciones
-        animationManager.init();
+            animationManager.init();
+
+            // Asegurar que las secciones no queden con estilos inline residuales
+            // (permite que las animaciones completen y luego limpia inline opacity/transform)
+            setTimeout(() => {
+                if (window.gsap) {
+                    gsap.set('.section', { clearProps: 'opacity,transform' });
+                }
+            }, 600);
 
         // Configurar event listeners globales
         this.setupGlobalEvents();
@@ -59,16 +73,12 @@ class SmartRoomApp {
      * Configura event listeners globales
      */
     setupGlobalEvents() {
+        if (this.globalEventsBound) {
+            return;
+        }
+
         // Manejar cambios de visibilidad de la pestaña
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                console.log('Aplicación minimizada');
-                dashboard.destroy();
-            } else {
-                console.log('Aplicación activada');
-                dashboard.init();
-            }
-        });
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
         // Manejar cambios de orientación en móviles
         window.addEventListener('orientationchange', () => {
@@ -94,6 +104,24 @@ class SmartRoomApp {
         document.addEventListener('gesturestart', (e) => {
             e.preventDefault();
         });
+
+        this.globalEventsBound = true;
+    }
+
+    /**
+     * Maneja visibilidad de la pestaña
+     */
+    async handleVisibilityChange() {
+        if (document.hidden) {
+            console.log('Aplicación minimizada');
+            dashboard.destroy();
+            return;
+        }
+
+        console.log('Aplicación activada');
+        if (!dashboard.isInitialized) {
+            await dashboard.init();
+        }
     }
 
     /**
@@ -307,6 +335,7 @@ Sistema inteligente de monitoreo y control domótico.
 // ========== INICIALIZACIÓN ==========
 // Crear instancia global de la aplicación
 const app = new SmartRoomApp();
+window.app = app;
 
 // Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {

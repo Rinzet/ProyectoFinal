@@ -46,7 +46,8 @@
     }
     
     .charts-grid {
-        grid-template-columns: 1fr;
+        /* Keep charts side-by-side on tablet widths for better comparison */
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
     }
     
     .sensors-grid {
